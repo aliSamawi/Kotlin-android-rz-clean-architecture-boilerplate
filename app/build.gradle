@@ -1,0 +1,136 @@
+plugins {
+    id 'com.onesignal.androidsdk.onesignal-gradle-plugin' version '0.8.0'
+}
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    def project_name = "kotlin rz boilerplate"
+
+
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "ir.r3za13.koltin_rz_boilerplate"
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+
+        debug {
+            debuggable true
+            applicationIdSuffix ".debug"
+            signingConfig signingConfigs.debug
+        }
+
+        development {
+            initWith debug
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "DEV_" + project_name
+            buildConfigField 'String', 'BASE_URL', '"https://98db502b-c1aa-48db-aef1-ae8066f28e95.mock.pstmn.io"'
+//
+//            manifestPlaceholders = [onesignal_app_id: "e43725e7-e846-4a75-a1e7-5bc973552251",
+//                                    // Project number pulled from dashboard, local value is ignored.
+//                                    onesignal_google_project_number: "REMOTE"]
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+
+    kapt { generateStubs = true }
+    targetCompatibility = '1.7'
+    sourceCompatibility = '1.7'
+    buildToolsVersion '26.0.2'
+}
+
+dependencies {
+
+    def appDependencies = rootProject.ext.dependencies
+    def testDependecies = rootProject.ext.testDependencies
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //Kotlin
+    implementation appDependencies.kotlin
+
+    //Suppor
+    implementation appDependencies.support
+    implementation appDependencies.supportAppCompat
+    implementation appDependencies.supportDesign
+    implementation appDependencies.supportCardView
+    implementation appDependencies.constraintLayout
+
+    //PlayServices
+    implementation appDependencies.servicesMap
+    implementation appDependencies.locationMap
+//    implementation appDependencies.gcmMap
+
+    //ROOM
+    implementation appDependencies.roomRunTime
+    kapt appDependencies.roomCompiler
+    implementation appDependencies.roomRX
+
+    //RETROFIT
+    implementation appDependencies.retrofit
+    implementation appDependencies.retrofitGsonConverter
+
+    //RXJAVA
+    implementation appDependencies.rxJava
+    implementation appDependencies.rxAndroid
+    implementation appDependencies.retrofitRxJavaAdapter
+
+    //DAGGER
+    implementation appDependencies.dagger
+    kapt appDependencies.daggerCompiler
+//    implementation "org.glassfish:javax.annotation:10.0-b28"
+
+    //OkHttp
+    implementation appDependencies.loggingInterceptor
+
+    //Glide
+    implementation appDependencies.Glide
+
+    //Hawk
+    implementation appDependencies.hawk
+
+    //eventBus
+    implementation appDependencies.eventBus
+
+    //one signal
+//    implementation appDependencies.oneSignal
+
+    implementation(appDependencies.MaterialDialog) {
+        exclude group: 'com.android.support'
+    }
+
+    compile 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
+    //TODO use dependencies for tests
+    //TEST
+    testCompile testDependecies.jUnit
+    testCompile "org.mockito:mockito-all:1.10.19"
+    testCompile testDependecies.hamcrest
+    testCompile "org.powermock:powermock-module-junit4:1.7.3"
+    testCompile "org.powermock:powermock-api-mockito2:1.7.3"
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+}
+
+repositories {
+    mavenCentral()
+}
